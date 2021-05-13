@@ -6,7 +6,7 @@
 //
 
 import Foundation
-//step 1 create am api caller class and get free api key from coinAPI.io
+
 final class APICaller {
     static let shared = APICaller()
     
@@ -16,8 +16,8 @@ final class APICaller {
     }
     
     private init() {}
-    
-    public func getAllCryptoData(completion: @escaping (Result<[String], Error>) -> Void) {
+    //step 2 add Cryptos to result type and decode
+    public func getAllCryptoData(completion: @escaping (Result<[Crypto], Error>) -> Void) {
         guard let url = URL(string: Constants.assetsEndpoint + "?apikey=" + Constants.key) else {
             return
         }
@@ -26,14 +26,12 @@ final class APICaller {
                 return
             }
             do {
-                //decode response
+                let cryptos = try JSONDecoder().decode([Crypto].self, from: data)
+                completion(.success(cryptos))
             } catch {
                 completion(.failure(error))
             }
         }
         task.resume()
     }
-
-    
-    
 }
