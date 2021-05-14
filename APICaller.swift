@@ -16,7 +16,7 @@ final class APICaller {
     }
     
     private init() {}
-    //step 2 add Cryptos to result type and decode
+
     public func getAllCryptoData(completion: @escaping (Result<[Crypto], Error>) -> Void) {
         guard let url = URL(string: Constants.assetsEndpoint + "?apikey=" + Constants.key) else {
             return
@@ -26,8 +26,11 @@ final class APICaller {
                 return
             }
             do {
+                //step 3 add a sort to show all the crypto prices
                 let cryptos = try JSONDecoder().decode([Crypto].self, from: data)
-                completion(.success(cryptos))
+                completion(.success(cryptos.sorted { first, second -> Bool in
+                    return first.price_usd ?? 0 > second.price_usd ?? 0
+                }))
             } catch {
                 completion(.failure(error))
             }

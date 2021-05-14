@@ -6,7 +6,7 @@
 //
 
 import Foundation
-//step 3 create a viewmodel
+
 struct CryptoTableViewCellViewModel {
     let name: String
     let symbol: String

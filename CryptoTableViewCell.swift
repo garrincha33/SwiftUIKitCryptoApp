@@ -30,34 +30,32 @@ class CryptoTableViewCell: UITableViewCell {
         lable.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         return lable
     }()
-    
-    //step 4 add to subview
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(symbolLable)
         contentView.addSubview(nameLable)
         contentView.addSubview(priceLable)
-        //step 5 create a stackView
         let stackView = UIStackView(arrangedSubviews: [symbolLable, nameLable, priceLable])
         stackView.axis = .horizontal
-        stackView.spacing = 4
-        stackView.alignment = .center
+        stackView.spacing = 8
+        stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(stackView)
-        stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        //step 1 adjust stackview
+        stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40).isActive = true
         stackView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
-    
-    //step 6 layout subviews
+
     override func layoutSubviews() {
         super.layoutSubviews()
         nameLable.sizeToFit()
         priceLable.sizeToFit()
         symbolLable.sizeToFit()
     }
-    //step 7 configure lables and UI
+
     func configure(with viewModel: CryptoTableViewCellViewModel) {
         nameLable.text = viewModel.name
         priceLable.text = viewModel.price
@@ -67,6 +65,4 @@ class CryptoTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
 }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-//step 1 create your crypto models
+
 struct Crypto: Codable {
     let asset_id: String
     let name: String?

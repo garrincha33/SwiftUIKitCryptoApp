@@ -16,8 +16,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.register(CryptoTableViewCell.self, forCellReuseIdentifier: CryptoTableViewCell.identifier)
         return tableView
     }()
-    //step 8 view model ref
     private var viewModels = [CryptoTableViewCellViewModel]()
+    //step 4 create a number formatter
+    static let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.locale = .current
+        formatter.allowsFloats = true
+        formatter.numberStyle = .currency
+        formatter.formatterBehavior = .default
+        return formatter
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,15 +43,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func getCryptos() {
-        //step 9 weak self
         APICaller.shared.getAllCryptoData { [weak self] result in
             switch result {
             case .success(let models):
                 self?.viewModels = models.compactMap({
-                    //number formatter //step 10 enter your viewmodel and compact map to bind model
-                    CryptoTableViewCellViewModel(name: $0.name ?? "", symbol: $0.asset_id, price: "£1")
+                    //number formatter //step 5 use number formatter
+                    let price = $0.price_usd ?? 0
+                    let formatter = ViewController.numberFormatter
+                    let priceString = formatter.string(from: NSNumber(value: price))
+                    return CryptoTableViewCellViewModel(name: $0.name ?? "", symbol: $0.asset_id, price: priceString ?? "N/A")
                 })
-                //step 11 dispatch quewue to relad
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()
                 }
@@ -59,7 +68,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.contentInset = UIEdgeInsets(top: -35, left: 0, bottom: 0, right: 0);
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //step 12 viewmodels count to get actual numbers
         return viewModels.count
     }
     
@@ -67,9 +75,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CryptoTableViewCell.identifier, for: indexPath) as? CryptoTableViewCell else {
             fatalError()
         }
-        //step 13 use our configure cell modethod to get the index patth row
+
         cell.configure(with: viewModels[indexPath.row])
         return cell
+    }
+    //step 2 increase height of cell
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
     }
 }
 
